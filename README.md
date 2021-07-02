@@ -1,9 +1,20 @@
 # Short-term Crowdedness Predictions for Public Locations in Amsterdam
 
 This repository shows the code that I produced for my thesis project on predicting crowdedness at the City of Amsterdam.
-With this code, we can make 2 hour-ahead predictions for the estimated visitor count at various public locations in Amsterdam. These locations are mostly parks and squares, but can also be shopping streets or market places. 
-These predictions can be shown on the crowd monitoring website https://druktebeeld.amsterdam.nl/ of the City of Amsterdam.
-The main data source that is being predicted are aggregated visitor counts per location, gathered by Resono (https://reso.no/)
+The City of Amsterdam has developed a crowd monitoring website (ttps://druktebeeld.amsterdam.nl/) which is publicly accessible. Here, citizens and visitors can receive information on real-time crowdedness in Amsterdam based on various data sources (sensors, parking garages, etc.).
+
+![](figures/druktebeeld_screenshot.png)
+*Screenshot of the druktebeeld website.*
+
+For my thesis project in Artificial Intelligence I created code to make 2 hour-ahead predictions for the crowdedness levels at various public locations in Amsterdam, that can be shown on the druktebeeld website. These locations are mostly parks and squares, but can also be shopping streets or market places. 
+
+![](figures/druktebeeld_predictions_example.png)
+*A concept of the crowdedness predictions in druktebeeld.*
+
+The data source that is being predicted are aggregated visitor counts per location, gathered by Resono (https://reso.no/). After performing multiple experiments, the selected prediction model is a linear regression model with the addition of an oversampling technique (SMOTE). For each public location, the model takes past crowdedness observations, time information, COVID-19-related information and holiday information as input and outputs the predicted number of visitors for the next 2 hours. 
+
+![](figures/prediction_model.png)
+*Diagram of the selected prediction model.*
 
 ---
 
@@ -18,7 +29,7 @@ The main data source that is being predicted are aggregated visitor counts per l
 
 ## How it works
 
-In the main notebook, resono_2h_predictions.ipynb predictions can be generated based on some settings. These settings can be given as arguments in the notebook (more explanation on the different arguments is given in the notebook). This notebook makes use of two files with functions ```prediction_model_helpers.py``` and ```resono_2h_predictions.py```. 
+In the main notebook, resono_2h_predictions.ipynb predictions can be generated based on some settings. These settings can be given as arguments in the notebook (more explanations on the different arguments are given in the notebook). This notebook makes use of two files with functions ```prediction_model_helpers.py``` and ```resono_2h_predictions.py```. 
 
 With the notebook the predictions can be generated using the following steps:
 1) Reading in the data from the database (crowdedenss data and external factors)
