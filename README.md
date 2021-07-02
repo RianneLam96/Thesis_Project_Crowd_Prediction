@@ -1,11 +1,7 @@
-# A Very Fancy Project Name
+# Short-term Crowdedness Predictions for Public Locations in Amsterdam
 
-Explain in short what this repository is. Mind the target audience.
-No need to go into too much technical details if you expect some people would just use it as end-users 
-and don't care about the internals (so focus on what the code really *does*), not how.
-The *_How it works_* section below would contain more technical details for curious people.
-
-If applicable, you can also show an example of the final output.
+This repository shows the code that I produced for my thesis project on predicting crowdedness at the City of Amsterdam.
+With this code, we can make 2 hour-ahead predictions for the estimated visitor count at various public locations in Amsterdam. These locations are mostly parks and squares, but can also be shopping streets or market places. 
 
 ![](media/examples/emojis.png)
 
@@ -14,61 +10,26 @@ If applicable, you can also show an example of the final output.
 
 ## Project Folder Structure
 
-Explain a little bit what's where so people can find their way around. For exampole:
-
-There are the following folders in the structure:
-
-1) [`resources`](./resources): Random nice resources, e.g. [`useful links`](./resources/links.md)
-1) [`src`](./src): Folder for all source files specific to this project
-1) [`media`](./media): Folder containing media files (icons, video)
-1) ...
-
----
-
-
-## Installation
-
-Explain how to set up everything. 
-Let people know if there are weird dependencies - if so feel free to add links to guides and tutorials.
-
-A person should be able to clone this repo, follow your instructions blindly, and still end up with something *fully working*!
-
-1) Clone this repository:
-    ```bash
-    git clone https://github.com/Amsterdam-Internships/InternshipAmsterdamGeneral
-    ```
-
-2) Install all dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
----
-
-
-## Usage
-
-Explain example usage, possible arguments, etc. E.g.:
-
-To train... 
-
-
-```
-$ python train.py --some-importang-argument
-```
+1) [`code`](./code): Folder containing a public version of the project code.
+2) [`figures`](./figures): Folder containing figures used to illustrate the project.
 
 ---
 
 
 ## How it works
 
-Explain roughly how the code works, what the main components are, how certain crucial steps are performed...
+In the main notebook, resono_2h_predictions.ipynb predictions can be generated based on some settings. These settings can be given as arguments in the notebook (more explanation on the different arguments is given in the notebook). This notebook makes use of two files with functions prediction_model_helpers.py and resono_2h_predictions.py. The notebook executes the following steps:
+1) Reading in the data from the database (crowdedenss data and external factors)
+2) Preprocessing the data 
+3) Training a prediction model
+4) Generating the predictions 
+5) Outputting the predictions to the database
+
+**Backtesting**: several experiments were performed where the use of different predictor variables and prediction models were compared based on validation/test data.  The code for this falls under the backtesting section of the notebook. 
 
 ---
 ## Acknowledgements
 
+Some functions in prediction_model_helpers.py were written by Shayla Jansen (@City of Amsterdam). 
 
-Don't forget to acknowledge any work by others that you have used for your project. Add links and check whether the authors have explicitly stated citation preference for using the DOI or citing a paper or so. 
-For example:
-
-Our code uses [YOLOv5](https://github.com/ultralytics/yolov5) [![DOI](https://zenodo.org/badge/264818686.svg)](https://zenodo.org/badge/latestdoi/264818686)
 
