@@ -30,7 +30,7 @@ The data source that is being predicted are aggregated visitor counts per locati
 
 ## How it works
 
-In the main notebook, resono_2h_predictions.ipynb predictions can be generated based on some settings. These settings can be given as arguments in the notebook (more explanations on the different arguments are given in the notebook). This notebook makes use of two files with functions ```prediction_model_helpers.py``` and ```resono_2h_predictions.py```. 
+In the main notebook, ```crowdedness_predictions.ipynb``` predictions can be generated based on some settings. These settings can be given as arguments in the notebook (more explanations on the different arguments are given in the notebook). This notebook makes use of four files with functions ```main.py```, ```preprocessing.py```, ```modelling.py``` and ```backtesting.py```. 
 
 With the notebook the predictions can be generated using the following steps:
 1) Reading in the data from the database (crowdedenss data and external factors)
@@ -39,13 +39,13 @@ With the notebook the predictions can be generated using the following steps:
 4) Generating the predictions 
 5) Outputting the predictions to the database
 
-**Backtesting**: Several experiments were performed where the use of different predictor variables and prediction models were compared based on validation/test data.  The code for this falls under the backtesting section of the notebook. 
+**Backtesting**: Several experiments were performed where the use of different predictor variables and prediction models were compared based on validation/test data.  This was done in the backtesting section of the notebook. 
 
 ---
 ## Acknowledgements
 
 - Public data source: Government Response Stringency Index: https://covidtracker.bsg.ox.ac.uk/about-api
 - Private data source: Location data based on mobile devices: https://reso.no/
-- Some functions in ```prediction_model_helpers.py``` were written by Shayla Jansen (@City of Amsterdam). 
+- Some functions in ```preprocessing.py``` and ```backtesting.py``` were written by Shayla Jansen (@City of Amsterdam). 
 
 
