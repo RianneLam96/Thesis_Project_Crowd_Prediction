@@ -1,0 +1,15 @@
+pytz==2020.1
+plotly==4.14.3
+pandas==0.25.3
+SQLAlchemy==1.3.13
+scipy==1.4.1
+seaborn==0.10.0
+geopandas==0.6.1
+numpy==1.19.0
+requests==2.22.0
+matplotlib==3.2.2
+imblearn==0.0
+mord==0.6
+pyspark==3.1.2
+scikit_learn==0.24.2
+workalendar==15.3.1

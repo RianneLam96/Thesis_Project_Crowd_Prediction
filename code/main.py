@@ -8,7 +8,8 @@ import geopandas as gpd
 import numpy as np
 import os
 import copy
-import prediction_model_helpers as h
+import preprocessing as pp
+import modelling as md
 
 # Database connection
 from sqlalchemy import create_engine, inspect
@@ -27,6 +28,8 @@ from workalendar.europe import Netherlands
 import matplotlib
 import matplotlib.pyplot as plt
 
+### FUNCTIONS - main
+
 def prepare_data(env, freq, predict_period, n_samples_day, Y_names, target, start_learnset):
     '''
     Prepare data for Resono predictions 
@@ -35,14 +38,14 @@ def prepare_data(env, freq, predict_period, n_samples_day, Y_names, target, star
     # ### 1. Get data
     
     # Database connection
-    engine_azure, table_names = h.prepare_engine(env)
+    engine_azure, table_names = pp.prepare_engine(env)
     
     # Which locations to include (based on druktebeeld inclusion)
     if Y_names == "all":
         Y_inc = select_locations(engine_azure)
 
     # Read in raw Resono data
-    resono_df_raw = h.get_data(engine_azure, "ingested.resono", Y_names, start_learnset)
+    resono_df_raw = pp.get_data(engine_azure, "ingested.resono", Y_names, start_learnset)
     
     # Store thresholds
     thresholds = get_thresholds(engine_azure, Y_names) 
@@ -63,17 +66,17 @@ def prepare_data(env, freq, predict_period, n_samples_day, Y_names, target, star
     # ### 2. Preprocess data
 
     # Resono data preprocessed
-    resono_df = h.preprocess_resono_data(resono_df_raw, freq, end_prediction)
+    resono_df = pp.preprocess_resono_data(resono_df_raw, freq, end_prediction)
 
     if Y_names == "all":
     # Select locations that are included in druktebeeld
         resono_df = resono_df[resono_df.columns[resono_df.columns.isin(Y_inc)]]
     
     # COVID data preprocessed
-    covid_df = h.preprocess_covid_data(covid_df_raw, freq, end_prediction)
+    covid_df = pp.preprocess_covid_data(covid_df_raw, freq, end_prediction)
 
     # Holiday data preprocessed
-    holiday_df = h.preprocess_holidays_data(holidays_data_raw, freq, end_prediction)
+    holiday_df = pp.preprocess_holidays_data(holidays_data_raw, freq, end_prediction)
     
     # Join location-independent data into base df
     base_df = covid_df.join(holiday_df)
@@ -94,17 +97,17 @@ def get_resono_predictions(df, resono_df_raw, freq, predict_period, n_samples_da
     # ### 1. Clean data
 
     # Impute/drop missing data and substitute outliers
-    df = h.clean_data(df, target, Y_name, n_samples_day, cols_to_clean = None, outlier_removal = outlier_removal)
+    df = pp.clean_data(df, target, Y_name, n_samples_day, cols_to_clean = None, outlier_removal = outlier_removal)
     
     if target == "level":
         # Re-calculate crowd levels
-        df = h.get_crowd_levels(df, Y_name, thresholds) 
+        df = pp.get_crowd_levels(df, Y_name, thresholds) 
 
     # Add time features
-    df = h.add_time_variables(df)
+    df = pp.add_time_variables(df)
 
     # Create new features from the data
-    df = h.add_lag_variables(df, Y_name, target, predict_period, n_samples_day, n_samples_week)
+    df = pp.add_lag_variables(df, Y_name, target, predict_period, n_samples_day, n_samples_week)
 
     # filter data based on start learnset
     df = df[start_learnset:]
@@ -124,7 +127,7 @@ def get_resono_predictions(df, resono_df_raw, freq, predict_period, n_samples_da
     else:
         # scale dataset
         df_unscaled = df.copy()
-        df, y_scaler = h.scale_variables(df, Y_name, target, method = "standard")
+        df, y_scaler = pp.scale_variables(df, Y_name, target, method = "standard")
         
         # scale thresholds
         thresholds_scaled = copy.deepcopy(thresholds)
@@ -136,9 +139,9 @@ def get_resono_predictions(df, resono_df_raw, freq, predict_period, n_samples_da
 
     # ### 2. Create model dataframes
 
-        df_X_train, df_y_train = h.get_train_df(df, Y_name, start_prediction) 
+        df_X_train, df_y_train = pp.get_train_df(df, Y_name, start_prediction) 
 
-        df_y_predict = h.get_future_df(start_prediction, predict_period, freq)
+        df_y_predict = pp.get_future_df(start_prediction, predict_period, freq)
 
         df_X_predict = df.drop(Y_name, 1)
 
@@ -149,23 +152,25 @@ def get_resono_predictions(df, resono_df_raw, freq, predict_period, n_samples_da
     # ### 3. Create operational prediction
 
         # Linear regression model with L2-regularization (ridge)
-        model = h.train_model_ridge_regression(df_X_train, df_y_train, Y_name, target, 
+        model = md.train_model_ridge_regression(df_X_train, df_y_train, Y_name, target, 
                                                thresholds_one = thresholds_scaled, use_smote = use_smote)
 
-        df_y_predict[Y_name] = h.test_model_ridge_regression(model, df_X_predict)
+        df_y_predict[Y_name] = md.test_model_ridge_regression(model, df_X_predict)
                                                          
         # unscale prediction
         if target == "count":
-            df_y_predict = h.unscale_y(df_y_predict, y_scaler)
+            df_y_predict = md.unscale_y(df_y_predict, y_scaler)
 
 
     # ### 4. Prepare output
 
-    final_df = h.prepare_final_dataframe(df_y_predict, resono_df_raw, data_source, target, current_model_version,
+    final_df = md.prepare_final_dataframe(df_y_predict, resono_df_raw, data_source, target, current_model_version,
                                          current_data_version)
 
     return df, final_df, y_scaler, thresholds_scaled
 
+
+### FUNCTIONS - helpers
 
 def select_locations(engine):
     '''
