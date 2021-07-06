@@ -10,7 +10,7 @@ For my thesis project in Artificial Intelligence I created code to make 2 hour-a
 
 ![](figures/druktebeeld_predictions_example.png)
 
-*A concept of the crowdedness predictions in druktebeeld.*
+*A concept for the crowdedness predictions in druktebeeld.*
 
 The data source that is being predicted are aggregated visitor counts per location, gathered by Resono (https://reso.no/). After performing multiple experiments, the selected prediction model is a linear regression model with the addition of an oversampling technique (SMOTE). For each public location, the model takes past crowdedness observations, time information, COVID-19-related information and holiday information as input and outputs the predicted number of visitors for the next 2 hours. 
 
