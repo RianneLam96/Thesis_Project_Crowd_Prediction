@@ -37,7 +37,7 @@ With the notebook the predictions can be generated using the following steps:
 2) Preprocessing the data 
 3) Training a prediction model
 4) Generating the predictions 
-5) Outputting the predictions to the database
+5) Writing the predictions to the database
 
 **Backtesting**: Several experiments were performed where the use of different predictor variables and prediction models were compared based on validation/test data.  This was done in the backtesting section of the notebook. 
 
